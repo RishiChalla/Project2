@@ -58,6 +58,3 @@ All variables listed below can be found in the file `CleanedData/project2Complet
 | Dependent | Food Assistance for Unauthorized Children | `Food.Assist.for.Immigrant.Kids` | N/A |
 | Dependent | Food Assistance for Unauthorized Adults | `Food.Assist.for.Immigrant.Adults` | N/A |
 | Dependent | Immigration Composite Score | `Immigration.Composite.Score` | N/A |
-
-## Hypotheses
-
