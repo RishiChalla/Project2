@@ -116,6 +116,21 @@ createPlot <- function(graph, saveToFile = FALSE, filename = "") {
 }
 
 "
+Visualizes a single variable (Shows the distribution of it over time)
+If staticGraph is set to false then any static graph arguments can be ommitted, same goes for animatedGraph.
+
+args:
+	variable (character): The name of the variable to visualize
+	staticGraphFilename (character): The filename and path (.png) of the static graph
+	animatedGraphFilename (character): The filename and path (.gif) of the animated grpah
+	ylabel (character): The label description of the variable being visualized
+	staticGraphSubtitle (character): The subtitle of the static graph
+	staticGraphTitle (character): The title of the static graph
+	animatedGraphTitle (character): THe title of the animated graph
+	continious (logical): Whether or not the variable is continious
+	removeStaticNA (logical): Removes all NAs before creating any static graphs if set to true
+	staticGraph (logical): Whether or not to create the static graph
+	animatedGraph (logical): Whether or not to create the animated graph
 "
 visualizeVariable <- function(variable, staticGraphFilename, animatedGraphFilename, ylabel, staticGraphSubtitle, staticGraphTitle,
 	animatedGraphTitle, continious = TRUE, removeStaticNA = FALSE, staticGraph = TRUE, animatedGraph = TRUE) {
