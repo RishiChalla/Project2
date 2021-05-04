@@ -25,10 +25,14 @@ runStepwiseRegression = FALSE;
 # If set to TRUE when there are already graphs then the graphs will simply be rewritten
 createGraphs = FALSE;
 
-# Whether or not ot create the animated graphs, all animated graphs will create a temporary folder
+# Whether or not to create the animated graphs, all animated graphs will create a temporary folder
 # and then delete that folder in order to create the animation.
 # NOTE: ANIMATED GRAPHS IS VERY GPU INTENSIVE - SET TO FALSE UNLESS ABSOLUTELY NECESSARY
 createAnimatedGraphs = FALSE;
+
+# Whether or not to save graphs to a file - The `Graphs` folder must exist in the same directory as the R script
+# if set to true.
+saveGraphsToFile = TRUE;
 
 # --------------------------------- Data Cleaning ---------------------------------
 
@@ -132,8 +136,8 @@ args:
 	staticGraph (logical): Whether or not to create the static graph
 	animatedGraph (logical): Whether or not to create the animated graph
 "
-visualizeVariable <- function(variable, staticGraphFilename, animatedGraphFilename, ylabel, staticGraphSubtitle, staticGraphTitle,
-	animatedGraphTitle, continious = TRUE, removeStaticNA = FALSE, staticGraph = TRUE, animatedGraph = TRUE) {
+visualizeVariable <- function(saveGraphsToFile, variable, staticGraphFilename, animatedGraphFilename, ylabel, staticGraphSubtitle,
+	staticGraphTitle, animatedGraphTitle, continious = TRUE, removeStaticNA = FALSE, staticGraph = TRUE, animatedGraph = TRUE) {
 	# Boxplot
 	if (staticGraph) {
 		staticDataset = dataset
@@ -151,7 +155,7 @@ visualizeVariable <- function(variable, staticGraphFilename, animatedGraphFilena
 
 		createPlot(
 			graph = graph,
-			saveToFile = TRUE,
+			saveToFile = saveGraphsToFile,
 			filename = staticGraphFilename
 		)
 	}
@@ -178,20 +182,25 @@ visualizeVariable <- function(variable, staticGraphFilename, animatedGraphFilena
 			transition_time(Year)
 	}
 	
-	# Saving images directly and joining them rather than using `anim_save` due to bug causing flickering and low resolutions
-	duration = floor(length(unique(filteredDataset$Year)) / 5) # Duration of the anim is to be 5 years per second
-	animate(timeGraph, nframes = duration * 60, duration = duration, device = "png",
-		renderer = file_renderer("tempAnim", prefix = "tempAnimationImage", overwrite = TRUE))
-	imgs <- list.files("tempAnim", full.names = TRUE)
-	img_list <- lapply(imgs, image_read)
-	img_joined <- image_join(img_list)
-	img_animated <- image_animate(img_joined, fps = 20)
-	image_write(image = img_animated, path = paste("Graphs/", animatedGraphFilename, sep = ""))
-	unlink("tempAnim", recursive = TRUE)
+	if (saveGraphsToFile) {
+		# Saving images directly and joining them rather than using `anim_save` due to bug causing flickering and low resolutions
+		duration = floor(length(unique(filteredDataset$Year)) / 5) # Duration of the anim is to be 5 years per second
+		animate(timeGraph, nframes = duration * 60, duration = duration, device = "png",
+			renderer = file_renderer("tempAnim", prefix = "tempAnimationImage", overwrite = TRUE))
+		imgs <- list.files("tempAnim", full.names = TRUE)
+		img_list <- lapply(imgs, image_read)
+		img_joined <- image_join(img_list)
+		img_animated <- image_animate(img_joined, fps = 20)
+		image_write(image = img_animated, path = paste("Graphs/", animatedGraphFilename, sep = ""))
+		unlink("tempAnim", recursive = TRUE)
+	} else {
+		print(timeGraph);
+	}
 }
 
 # Evangelical Population Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "evangelical_pop",
 	staticGraphFilename = "EvangelicalPopStaticGraph.png",
 	animatedGraphFilename = "EvangelicalPopOverTime.gif",
@@ -205,6 +214,7 @@ visualizeVariable(
 
 # Number of Republican state Representatives Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "hs_rep_in_sess",
 	staticGraphFilename = "HsRepInSessStaticGraph.png",
 	animatedGraphFilename = "HsRepInSessOverTime.gif",
@@ -218,6 +228,7 @@ visualizeVariable(
 
 # Is there a unified Republican Government Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "rep_unified",
 	staticGraphFilename = "RepUnifiedStaticGraph.png",
 	ylabel = "Is there a unified Republican Government? (1: Yes, 0: No)",
@@ -231,6 +242,7 @@ visualizeVariable(
 
 # US Agriculture Sector Value Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "valueofagsect",
 	staticGraphFilename = "ValueofAgSectStaticGraph.png",
 	animatedGraphFilename = "ValueofAgSectOverTime.gif",
@@ -244,6 +256,7 @@ visualizeVariable(
 
 # Is there a unified Democrat Government Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "dem_unified",
 	staticGraphFilename = "DemUnifiedStaticGraph.png",
 	ylabel = "Is there a unified Democrat Government? (1: Yes, 0: No)",
@@ -257,6 +270,7 @@ visualizeVariable(
 
 # Stimson’s Policy Mood Measure Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "mood",
 	staticGraphFilename = "MoodStaticGraph.png",
 	animatedGraphFilename = "MoodOverTime.gif",
@@ -270,6 +284,7 @@ visualizeVariable(
 
 # Nonwhite-Population Visualization
 visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
 	variable = "nonwhite",
 	staticGraphFilename = "NonwhiteStaticGraph.png",
 	animatedGraphFilename = "NonwhiteOverTime.gif",
@@ -279,6 +294,30 @@ visualizeVariable(
 	animatedGraphTitle = "Non-White Populations Over Time",
 	staticGraph = createGraphs,
 	animatedGraph = createAnimatedGraphs
+)
+
+# Immigration Composite Score Visualization (Dependent) - Animated
+visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
+	variable = "Immigration.Composite.Score",
+	animatedGraphFilename = "ImmigrationCompScoreOverTime.gif",
+	ylabel = "Immigration Composite Score (0-8)",
+	animatedGraphTitle = "Immigration Friendliness Over Time",
+	staticGraph = FALSE,
+	animatedGraph = createAnimatedGraphs
+)
+
+# Immigration Composite Score Visualization (Dependent) - Static
+visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
+	variable = "Immigration.Composite.Score",
+	staticGraphFilename = "ImmigrationCompScoreStaticGraph.png",
+	ylabel = "Immigration Composite Score (0-8)",
+	staticGraphSubtitle = "How Immigration Friendly are the States?",
+	staticGraphTitle = "Immigration Friendliness Visualization",
+	staticGraph = createGraphs,
+	animatedGraph = FALSE,
+	continious = FALSE
 )
 
 # --------------------------------- Analysis ---------------------------------
