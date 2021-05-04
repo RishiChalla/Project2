@@ -9,6 +9,8 @@ All data used for actual analysis is in the `CleanedData/project2CompleteDataset
 
 ## Stepwise Regression Results
 
+### All Variables
+
 | Step | Variable          | R-Square | Adj. R-Square | C(p)      | AIC       | RMSE   |
 |------|-------------------|----------|---------------|-----------|-----------|--------|
 | 1    | `evangelical_pop` | 0.191    | 0.189         | 1263.7780 | 1988.7664 | 0.9988 |
@@ -19,6 +21,14 @@ All data used for actual analysis is in the `CleanedData/project2CompleteDataset
 | 6    | `dem_unified`     | 0.305    | 0.298         | 793.4080  | 1572.4138 | 0.9144 |
 | 7    | `mood`            | 0.294    | 0.284         | 686.5870  | 1425.5100 | 0.8996 |
 | 8    | `nonwhite`        | 0.299    | 0.289         | 679.1940  | 1424.3081 | 0.8970 |
+
+### Finance Variables
+
+| Step | Variable             | R-Square | Adj. R-Square | C(p)      | AIC       | RMSE   |
+|------|----------------------|----------|---------------|-----------|-----------|--------|
+| 1    | `pc_inc_ann`         | 0.041    | 0.039         | 44.3670   | 1817.2938 | 1.0776 |
+| 2    | `povrate`            | 0.074    | 0.071         | 24.0210   | 1797.9712 | 1.0597 |
+| 3    | `budget_surplus_gsp` | 0.087    | 0.082         | 17.3330   | 1791.4748 | 1.0532 |
 
 ## Variables
 > Note: All variables and analysis was conducted on a state level
@@ -31,14 +41,14 @@ All variables listed below can be found in the file `CleanedData/project2Complet
 | Independent | Year | `Year` | &times; |
 | Independent | Mood Index | `mood` | &check; |
 | Independent | Right to Work | `right2work` | &times; |
-| Independent | Per Capital Annual Income | `pc_inc_ann` | &times; |
-| Independent | State Poverty Rate | `povrate` | &times; |
+| Independent | Per Capital Annual Income | `pc_inc_ann` | &check; |
+| Independent | State Poverty Rate | `povrate` | &check; |
 | Independent | Consumer Price Index | `ccpi` | &times; |
 | Independent | Evangelical Population | `evangelical_pop` | &check; |
 | Independent | Non-White Population | `nonwhite` | &check; |
 | Independent | Value added to Economy by Agriculture Sector | `valueofagsect` | &check; |
 | Independent | U.S Region | `region` | &check; |
-| Independent | Budget surplus as % of GSP | `budget_surplus_gsp` | &times; |
+| Independent | Budget surplus as % of GSP | `budget_surplus_gsp` | &check; |
 | Independent | Is there a unified Democratic Government? | `dem_unified` | &check; |
 | Independent | Is there a unified Republican Government? | `rep_unified` | &check; |
 | Independent | Percentage of Latino Legislators | `pctlatinoleg` | &times; |
