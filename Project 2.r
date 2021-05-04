@@ -19,11 +19,11 @@ performCleaning = FALSE;
 
 # Whether or not to run the stepwise regression - this should product the same output as the table listed
 # in the comments below.
-runStepwiseRegression = FALSE;
+runStepwiseRegression = TRUE;
 
 # Whether or not to create the graphs, all created graphs will be placed in `Graphs/`
 # If set to TRUE when there are already graphs then the graphs will simply be rewritten
-createGraphs = FALSE;
+createGraphs = TRUE;
 
 # Whether or not to create the animated graphs, all animated graphs will create a temporary folder
 # and then delete that folder in order to create the animation.
@@ -32,7 +32,11 @@ createAnimatedGraphs = FALSE;
 
 # Whether or not to save graphs to a file - The `Graphs` folder must exist in the same directory as the R script
 # if set to true.
-saveGraphsToFile = TRUE;
+saveGraphsToFile = FALSE;
+
+# Whether or not to conduct the statistical analysis - The output of all the tests will already be in the comments
+# below
+conductStatisticalAnalysis = TRUE;
 
 # --------------------------------- Data Cleaning ---------------------------------
 
@@ -75,26 +79,39 @@ if (performCleaning) {
 # --------------------------------- Stepwise Regression ---------------------------------
 
 if (runStepwiseRegression) {
+	# All Variables
 	stepwiseRegressionModel = lm(Immigration.Composite.Score ~ mood + right2work + pc_inc_ann + povrate + ccpi + 
 		evangelical_pop + nonwhite + valueofagsect + region + budget_surplus_gsp + dem_unified + rep_unified +
 		pctlatinoleg + hs_dem_in_sess + hs_rep_in_sess + hs_ind_in_sess + sen_dem_in_sess + sen_rep_in_sess + sen_ind_in_sess,
 		data = dataset)
 	stepwiseRegressionResult = ols_step_both_p(stepwiseRegressionModel)
 	print(stepwiseRegressionResult)
-}
 
-"
-| Step | Variable          | R-Square | Adj. R-Square | C(p)      | AIC       | RMSE   |
-|------|-------------------|----------|---------------|-----------|-----------|--------|
-| 1    | `evangelical_pop` | 0.191    | 0.189         | 1263.7780 | 1988.7664 | 0.9988 |
-| 2    | `region`          | 0.233    | 0.231         | 1162.2700 | 1952.7828 | 0.9727 |
-| 3    | `hs_rep_in_sess`  | 0.265    | 0.261         | 866.6940  | 1599.5557 | 0.9381 |
-| 4    | `rep_unified`     | 0.291    | 0.287         | 816.5810  | 1579.9839 | 0.9219 |
-| 5    | `valueofagsect`   | 0.300    | 0.294         | 801.3050  | 1574.6542 | 0.9169 |
-| 6    | `dem_unified`     | 0.305    | 0.298         | 793.4080  | 1572.4138 | 0.9144 |
-| 7    | `mood`            | 0.294    | 0.284         | 686.5870  | 1425.5100 | 0.8996 |
-| 8    | `nonwhite`        | 0.299    | 0.289         | 679.1940  | 1424.3081 | 0.8970 |
-"
+	"
+	| Step | Variable          | R-Square | Adj. R-Square | C(p)      | AIC       | RMSE   |
+	|------|-------------------|----------|---------------|-----------|-----------|--------|
+	| 1    | `evangelical_pop` | 0.191    | 0.189         | 1263.7780 | 1988.7664 | 0.9988 |
+	| 2    | `region`          | 0.233    | 0.231         | 1162.2700 | 1952.7828 | 0.9727 |
+	| 3    | `hs_rep_in_sess`  | 0.265    | 0.261         | 866.6940  | 1599.5557 | 0.9381 |
+	| 4    | `rep_unified`     | 0.291    | 0.287         | 816.5810  | 1579.9839 | 0.9219 |
+	| 5    | `valueofagsect`   | 0.300    | 0.294         | 801.3050  | 1574.6542 | 0.9169 |
+	| 6    | `dem_unified`     | 0.305    | 0.298         | 793.4080  | 1572.4138 | 0.9144 |
+	| 7    | `mood`            | 0.294    | 0.284         | 686.5870  | 1425.5100 | 0.8996 |
+	| 8    | `nonwhite`        | 0.299    | 0.289         | 679.1940  | 1424.3081 | 0.8970 |
+	"
+
+	# Finance Only
+	stepwiseRegressionModel2 = lm(Immigration.Composite.Score ~ pc_inc_ann + ccpi + budget_surplus_gsp + povrate, data = dataset)
+	stepwiseRegressionResult2 = ols_step_both_p(stepwiseRegressionModel2)
+	print(stepwiseRegressionResult2)
+	"
+	| Step | Variable             | R-Square | Adj. R-Square | C(p)      | AIC       | RMSE   |
+	|------|----------------------|----------|---------------|-----------|-----------|--------|
+	| 1    | `pc_inc_ann`         | 0.041    | 0.039         | 44.3670   | 1817.2938 | 1.0776 |
+	| 2    | `povrate`            | 0.074    | 0.071         | 24.0210   | 1797.9712 | 1.0597 |
+	| 3    | `budget_surplus_gsp` | 0.087    | 0.082         | 17.3330   | 1791.4748 | 1.0532 |
+	"
+}
 
 # --------------------------------- Visualizations ---------------------------------
 
@@ -296,6 +313,48 @@ visualizeVariable(
 	animatedGraph = createAnimatedGraphs
 )
 
+# Per Capita Annual Income Visualization
+visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
+	variable = "pc_inc_ann",
+	staticGraphFilename = "AnnualIncomeStaticGraph.png",
+	animatedGraphFilename = "AnnualIncomeOverTime.gif",
+	ylabel = "Per Capita Annual Income",
+	staticGraphSubtitle = "What does the Distribution of Income look like?",
+	staticGraphTitle = "Annual Income Visualization",
+	animatedGraphTitle = "Annual Income Over Time",
+	staticGraph = createGraphs,
+	animatedGraph = createAnimatedGraphs
+)
+
+# State Poverty Rate
+visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
+	variable = "povrate",
+	staticGraphFilename = "PovertyRateStaticGraph.png",
+	animatedGraphFilename = "PovertyRateOverTime.gif",
+	ylabel = "State Poverty Rate",
+	staticGraphSubtitle = "What does the Distribution Poverty look like?",
+	staticGraphTitle = "Poverty Rate Visualization",
+	animatedGraphTitle = "Poverty Rate Over Time",
+	staticGraph = createGraphs,
+	animatedGraph = createAnimatedGraphs
+)
+
+# Budget surplus as pct. of GSP
+visualizeVariable(
+	saveGraphsToFile = saveGraphsToFile,
+	variable = "budget_surplus_gsp",
+	staticGraphFilename = "BudgetSurplusStaticGraph.png",
+	animatedGraphFilename = "BudgetSurplusOverTime.gif",
+	ylabel = "Budget surplus as % of GSP",
+	staticGraphSubtitle = "What does the Distribution of Budget Surplus look like?",
+	staticGraphTitle = "Budget surplus Visualization",
+	animatedGraphTitle = "Budget surplus Over Time",
+	staticGraph = createGraphs,
+	animatedGraph = createAnimatedGraphs
+)
+
 # Immigration Composite Score Visualization (Dependent) - Animated
 visualizeVariable(
 	saveGraphsToFile = saveGraphsToFile,
@@ -322,3 +381,35 @@ visualizeVariable(
 
 # --------------------------------- Analysis ---------------------------------
 
+if (conductStatisticalAnalysis) {
+	# H1.) In an analysis of states, there is a relationship between a state’s public finance (as measured by per capita income,
+	#	the state’s CPI, and the poverty rate) and the disposition of its state level immigration legislation.
+
+	linearModel1 = lm(Immigration.Composite.Score ~ pc_inc_ann + budget_surplus_gsp + povrate, data = dataset)
+	summary(linearModel1)
+
+	# H1a) The direction and strength of these relationships varies with demographic factors such as the state’s racial makeup, the
+	# 	strength of labor unionization, the concentration of evangelical residents, and the citizens’ level of liberalism or
+	# 	conservatism.
+	linearModel2 = lm(Immigration.Composite.Score ~ pc_inc_ann + budget_surplus_gsp + povrate + evangelical_pop +
+		region + hs_rep_in_sess + rep_unified + valueofagsect + dem_unified + mood + nonwhite, data = dataset)
+	summary(linearModel2)
+
+	# H2.) In an analysis of states, those that have higher levels of agricultural output are more likely to have state laws that are
+	# 	friendly towards immigration. This need for agricultural workforce mitigates other political or financial factors that might
+	# 	otherwise be the primary drivers of legislation towards immigration.
+	linearModel3 = lm(Immigration.Composite.Score ~ valueofagsect, data = dataset);
+	summary(linearModel3)
+
+	# H3.) In an analysis of states, unified control of the government by one party has a relationship with state level immigration
+	# 	legislation. Unified control by republicans has a negative relationship with pro-immigration policies whereas unified
+	# 	control by Democrats has a positive relationship with pro-immigration policies.
+	linearModel4 = lm(Immigration.Composite.Score ~ rep_unified + dem_unified, data = dataset)
+	summary(linearModel4)
+
+	# H4.) Within an analysis of states, when analyzing the demographic of state legislatures, states with a higher percentage of
+	# 	latinx legislators have a positive correlation with pro-immigration policies. States with a low percentage of latinx
+	# 	legislators have a positive correlation with anti-immigration policy. 
+	linearModel5 = lm(Immigration.Composite.Score ~ pctlatinoleg, data = dataset)
+	summary(linearModel5)
+}
